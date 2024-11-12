@@ -1076,3 +1076,836 @@ class LinkedList:
             print(curr.data)
             curr = curr.next
 
+# 175. Implement binary tree traversal (in-order, pre-order, post-order).
+class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+def inorder_traversal(root):
+    return inorder_traversal(root.left) + [root.value] + inorder_traversal(root.right) if root else []
+
+def preorder_traversal(root):
+    return [root.value] + preorder_traversal(root.left) + preorder_traversal(root.right) if root else []
+
+def postorder_traversal(root):
+    return postorder_traversal(root.left) + postorder_traversal(root.right) + [root.value] if root else []
+
+# 176. Check if a string is a pangram.
+def is_pangram(s):
+    return set('abcdefghijklmnopqrstuvwxyz').issubset(set(s.lower()))
+
+# 177. Calculate the nth Fibonacci number using dynamic programming.
+def fibonacci_dp(n):
+    fib = [0, 1]
+    for i in range(2, n + 1):
+        fib.append(fib[i-1] + fib[i-2])
+    return fib[n]
+
+# 178. Implement Caesar cipher encryption.
+def caesar_cipher_encrypt(text, shift):
+    result = ""
+    for i in text:
+        if i.isalpha():
+            shift_base = ord('a') if i.islower() else ord('A')
+            result += chr((ord(i) - shift_base + shift) % 26 + shift_base)
+        else:
+            result += i
+    return result
+
+# 179. Implement Caesar cipher decryption.
+def caesar_cipher_decrypt(text, shift):
+    return caesar_cipher_encrypt(text, -shift)
+
+# 180. Find the first non-repeating character in a string.
+def first_non_repeating_char(s):
+    from collections import Counter
+    count = Counter(s)
+    for char in s:
+        if count[char] == 1:
+            return char
+    return None
+
+# 181. Check if two rectangles overlap.
+def rectangles_overlap(r1, r2):
+    return not (r1['left'] > r2['right'] or r1['right'] < r2['left'] or r1['top'] < r2['bottom'] or r1['bottom'] > r2['top'])
+
+# 182. Calculate the Levenshtein distance between two strings.
+def levenshtein_distance(s1, s2):
+    if len(s1) < len(s2):
+        return levenshtein_distance(s2, s1)
+    if len(s2) == 0:
+        return len(s1)
+    previous_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            insertions = previous_row[j + 1] + 1
+            deletions = current_row[j] + 1
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+    return previous_row[-1]
+
+# 183. Check if a number is an Armstrong number.
+def is_armstrong(number):
+    num_str = str(number)
+    power = len(num_str)
+    return number == sum(int(digit) ** power for digit in num_str)
+
+# 184. Find the length of the longest word in a sentence.
+def longest_word_length(sentence):
+    return max(len(word) for word in sentence.split())
+
+# 185. Generate Pascal's triangle up to n rows.
+def pascals_triangle(n):
+    triangle = [[1]]
+    for i in range(1, n):
+        row = [1] + [triangle[i-1][j] + triangle[i-1][j+1] for j in range(len(triangle[i-1]) - 1)] + [1]
+        triangle.append(row)
+    return triangle
+
+# 186. Calculate the transpose of a matrix.
+def transpose(matrix):
+    return list(map(list, zip(*matrix)))
+
+# 187. Check if a string is a valid palindrome ignoring non-alphanumeric characters.
+import re
+def is_valid_palindrome(s):
+    s = re.sub(r'[^a-zA-Z0-9]', '', s).lower()
+    return s == s[::-1]
+
+# 188. Rotate a matrix 90 degrees clockwise.
+def rotate_matrix_90(matrix):
+    return [list(row) for row in zip(*matrix[::-1])]
+
+# 189. Convert a binary number to decimal.
+def binary_to_decimal(binary):
+    return int(binary, 2)
+
+# 190. Convert a decimal number to binary.
+def decimal_to_binary(decimal):
+    return bin(decimal)[2:]
+
+# 191. Flatten a nested list.
+def flatten_list(nested_list):
+    flat_list = []
+    for item in nested_list:
+        if isinstance(item, list):
+            flat_list.extend(flatten_list(item))
+        else:
+            flat_list.append(item)
+    return flat_list
+
+# 192. Check if a given number is a power of two.
+def is_power_of_two(n):
+    return n > 0 and (n & (n - 1)) == 0
+
+# 193. Merge overlapping intervals.
+def merge_intervals(intervals):
+    intervals.sort(key=lambda x: x[0])
+    merged = [intervals[0]]
+    for current in intervals[1:]:
+        last = merged[-1]
+        if current[0] <= last[1]:
+            merged[-1] = [last[0], max(last[1], current[1])]
+        else:
+            merged.append(current)
+    return merged
+
+# 194. Find the smallest positive integer missing from an unsorted list.
+def smallest_missing_positive(nums):
+    nums = [num for num in nums if num > 0]
+    nums_set = set(nums)
+    smallest_missing = 1
+    while smallest_missing in nums_set:
+        smallest_missing += 1
+    return smallest_missing
+
+# 195. Implement matrix multiplication.
+def matrix_multiply(A, B):
+    result = [[sum(x * y for x, y in zip(A_row, B_col)) for B_col in zip(*B)] for A_row in A]
+    return result
+
+# 196. Find the longest common prefix among a list of strings.
+def longest_common_prefix(strs):
+    if not strs:
+        return ""
+    shortest = min(strs, key=len)
+    for i, char in enumerate(shortest):
+        if any(s[i] != char for s in strs):
+            return shortest[:i]
+    return shortest
+
+# 197. Find the largest rectangle in a histogram.
+def largest_rectangle_area(heights):
+    stack, max_area = [], 0
+    heights.append(0)
+    for i, h in enumerate(heights):
+        while stack and heights[stack[-1]] > h:
+            H = heights[stack.pop()]
+            W = i if not stack else i - stack[-1] - 1
+            max_area = max(max_area, H * W)
+        stack.append(i)
+    return max_area
+
+# 198. Implement bucket sort for floating-point numbers.
+def bucket_sort_floats(arr):
+    buckets = [[] for _ in range(len(arr))]
+    for num in arr:
+        index = int(num * len(arr))
+        buckets[index].append(num)
+    for i in range(len(arr)):
+        buckets[i] = sorted(buckets[i])
+    return [num for bucket in buckets for num in bucket]
+
+# 199. Find the maximum product of two elements in an array.
+def max_product_two_elements(arr):
+    arr.sort()
+    return arr[-1] * arr[-2]
+
+# 200. Check if a string is a valid IPv4 address.
+def is_valid_ipv4(ip):
+    parts = ip.split(".")
+    return len(parts) == 4 and all(p.isdigit() and 0 <= int(p) <= 255 for p in parts)
+
+# 201. Find the majority element in an array (appears more than n/2 times).
+def majority_element(arr):
+    candidate, count = None, 0
+    for num in arr:
+        if count == 0:
+            candidate, count = num, 1
+        elif num == candidate:
+            count += 1
+        else:
+            count -= 1
+    return candidate if arr.count(candidate) > len(arr) // 2 else None
+
+# 202. Check if two strings are rotations of each other.
+def are_rotations(str1, str2):
+    return len(str1) == len(str2) and str2 in str1 + str1
+
+# 203. Count inversions in an array (merge sort approach).
+def count_inversions(arr):
+    def merge_count_split_inv(arr, temp_arr, left, right):
+        if left == right:
+            return 0
+        mid = (left + right) // 2
+        inv_count = merge_count_split_inv(arr, temp_arr, left, mid)
+        inv_count += merge_count_split_inv(arr, temp_arr, mid + 1, right)
+        inv_count += merge(arr, temp_arr, left, mid, right)
+        return inv_count
+
+    def merge(arr, temp_arr, left, mid, right):
+        i, j, k, inv_count = left, mid + 1, left, 0
+        while i <= mid and j <= right:
+            if arr[i] <= arr[j]:
+                temp_arr[k] = arr[i]
+                i += 1
+            else:
+                temp_arr[k] = arr[j]
+                inv_count += (mid-i + 1)
+                j += 1
+            k += 1
+        while i <= mid:
+            temp_arr[k] = arr[i]
+            i += 1
+            k += 1
+        while j <= right:
+            temp_arr[k] = arr[j]
+            j += 1
+            k += 1
+        for i in range(left, right + 1):
+            arr[i] = temp_arr[i]
+        return inv_count
+
+    return merge_count_split_inv(arr, [0]*len(arr), 0, len(arr)-1)
+
+# 204. Implement recursive binary search.
+def binary_search_recursive(arr, low, high, x):
+    if high >= low:
+        mid = (high + low) // 2
+        if arr[mid] == x:
+            return mid
+        elif arr[mid] > x:
+            return binary_search_recursive(arr, low, mid - 1, x)
+        else:
+            return binary_search_recursive(arr, mid + 1, high, x)
+    return -1
+
+# 205. Find the intersection of two arrays.
+def array_intersection(arr1, arr2):
+    return list(set(arr1) & set(arr2))
+
+# 206. Find the union of two arrays.
+def array_union(arr1, arr2):
+    return list(set(arr1) | set(arr2))
+
+# 207. Implement breadth-first search (BFS) for a graph.
+from collections import deque
+def bfs(graph, start):
+    visited, queue = set(), deque([start])
+    result = []
+    while queue:
+        vertex = queue.popleft()
+        if vertex not in visited:
+            visited.add(vertex)
+            result.append(vertex)
+            queue.extend(neighbor for neighbor in graph[vertex] if neighbor not in visited)
+    return result
+
+# 208. Implement depth-first search (DFS) for a graph.
+def dfs(graph, start, visited=None):
+    if visited is None:
+        visited = set()
+    visited.add(start)
+    result = [start]
+    for next_vertex in graph[start] - visited:
+        result.extend(dfs(graph, next_vertex, visited))
+    return result
+
+# 209. Convert a given string to Morse code.
+MORSE_CODE_DICT = {
+    'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.', 'G': '--.', 'H': '....',
+    'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---', 'P': '.--.',
+    'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+    'Y': '-.--', 'Z': '--..', '1': '.----', '2': '..---', '3': '...--', '4': '....-', '5': '.....',
+    '6': '-....', '7': '--...', '8': '---..', '9': '----.', '0': '-----'
+}
+
+def to_morse_code(text):
+    return ' '.join(MORSE_CODE_DICT.get(char.upper(), '') for char in text)
+
+# 210. Convert Morse code to English.
+def morse_to_english(morse_code):
+    inverse_morse_dict = {v: k for k, v in MORSE_CODE_DICT.items()}
+    return ''.join(inverse_morse_dict.get(code, '') for code in morse_code.split())
+
+# 211. Check if a string is a valid email address.
+import re
+def is_valid_email(email):
+    regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return bool(re.match(regex, email))
+
+# 212. Check if an array is monotonic (either entirely non-increasing or non-decreasing).
+def is_monotonic(arr):
+    return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1)) or all(arr[i] >= arr[i + 1] for i in range(len(arr) - 1))
+
+# 213. Rotate an array by k elements to the right.
+def rotate_array(arr, k):
+    k %= len(arr)
+    return arr[-k:] + arr[:-k]
+
+# 214. Find the minimum number of coins to make change for an amount.
+def min_coins(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+    for i in range(1, amount + 1):
+        dp[i] = min([dp[i - coin] + 1 for coin in coins if i - coin >= 0], default=float('inf'))
+    return dp[amount] if dp[amount] != float('inf') else -1
+
+# 215. Check if a matrix is symmetric.
+def is_symmetric(matrix):
+    return all(matrix[i][j] == matrix[j][i] for i in range(len(matrix)) for j in range(len(matrix[i])))
+
+# 216. Implement a priority queue using a heap.
+import heapq
+class PriorityQueue:
+    def __init__(self):
+        self.queue = []
+    def push(self, item, priority):
+        heapq.heappush(self.queue, (-priority, item))
+    def pop(self):
+        return heapq.heappop(self.queue)[1]
+    def is_empty(self):
+        return len(self.queue) == 0
+
+# 217. Find the nth prime number.
+def nth_prime(n):
+    primes = []
+    num = 2
+    while len(primes) < n:
+        if all(num % prime != 0 for prime in primes):
+            primes.append(num)
+        num += 1
+    return primes[-1]
+
+# 218. Implement a function to flatten a dictionary.
+def flatten_dict(d, parent_key='', sep='_'):
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
+
+# 219. Find the prime factors of a number.
+def prime_factors(n):
+    i, factors = 2, []
+    while i * i <= n:
+        if n % i:
+            i += 1
+        else:
+            n //= i
+            factors.append(i)
+    if n > 1:
+        factors.append(n)
+    return factors
+
+# 220. Implement counting sort for characters (A-Z).
+def counting_sort_characters(s):
+    count = [0] * 26
+    for char in s:
+        count[ord(char) - ord('A')] += 1
+    return ''.join(chr(i + ord('A')) * count[i] for i in range(26))
+
+# 221. Generate random password of a given length.
+import random
+import string
+def generate_password(length=8):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(characters) for _ in range(length))
+
+# 222. Find the Hamming distance between two strings of equal length.
+def hamming_distance(str1, str2):
+    if len(str1) != len(str2):
+        raise ValueError("Strings must be of equal length")
+    return sum(1 for x, y in zip(str1, str2) if x != y)
+
+# 223. Convert a given sentence to Pig Latin.
+def to_pig_latin(sentence):
+    def convert_word(word):
+        return word[1:] + word[0] + 'ay' if word[0] not in 'aeiou' else word + 'way'
+    return ' '.join(convert_word(word) for word in sentence.split())
+
+# 224. Calculate the day of the week for a given date.
+import datetime
+def day_of_week(year, month, day):
+    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    return days[datetime.date(year, month, day).weekday()]
+
+# 225. Check if a number is a perfect square.
+def is_perfect_square(num):
+    return int(num ** 0.5) ** 2 == num
+
+# 226. Implement ternary search.
+def ternary_search(arr, left, right, x):
+    if right >= left:
+        mid1 = left + (right - left) // 3
+        mid2 = right - (right - left) // 3
+        if arr[mid1] == x:
+            return mid1
+        if arr[mid2] == x:
+            return mid2
+        if x < arr[mid1]:
+            return ternary_search(arr, left, mid1 - 1, x)
+        elif x > arr[mid2]:
+            return ternary_search(arr, mid2 + 1, right, x)
+        else:
+            return ternary_search(arr, mid1 + 1, mid2 - 1, x)
+    return -1
+
+# 227. Generate Fibonacci series up to a specified number.
+def fibonacci_up_to(n):
+    a, b = 0, 1
+    result = []
+    while a <= n:
+        result.append(a)
+        a, b = b, a + b
+    return result
+
+# 228. Determine if a number is part of the Fibonacci series.
+def is_fibonacci_number(n):
+    return is_perfect_square(5 * n ** 2 + 4) or is_perfect_square(5 * n ** 2 - 4)
+
+# 229. Calculate the factorial of a number using iterative approach.
+def factorial_iterative(n):
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result
+
+# 230. Create a list of n random numbers within a specified range.
+def random_numbers(n, start, end):
+    return [random.randint(start, end) for _ in range(n)]
+
+# 231. Calculate the power of a number modulo another number.
+def power_mod(base, exponent, mod):
+    result = 1
+    while exponent > 0:
+        if exponent % 2 == 1:
+            result = (result * base) % mod
+        base = (base * base) % mod
+        exponent //= 2
+    return result
+
+# 232. Check if a string has all unique characters.
+def all_unique_characters(s):
+    return len(set(s)) == len(s)
+
+# 233. Find the longest substring without repeating characters.
+def longest_unique_substring(s):
+    seen, start, max_len, longest = {}, 0, 0, ""
+    for i, char in enumerate(s):
+        if char in seen and start <= seen[char]:
+            start = seen[char] + 1
+        else:
+            current_len = i - start + 1
+            if current_len > max_len:
+                max_len = current_len
+                longest = s[start:i + 1]
+        seen[char] = i
+    return longest
+
+# 234. Implement a circular doubly linked list.
+class CircularDoublyLinkedListNode:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+        self.prev = None
+
+class CircularDoublyLinkedList:
+    def __init__(self):
+        self.head = None
+
+    def append(self, data):
+        new_node = CircularDoublyLinkedListNode(data)
+        if not self.head:
+            self.head = new_node
+            self.head.next = self.head
+            self.head.prev = self.head
+        else:
+            last = self.head.prev
+            last.next = new_node
+            new_node.prev = last
+            new_node.next = self.head
+            self.head.prev = new_node
+
+    def display(self):
+        nodes, current = [], self.head
+        while True:
+            nodes.append(current.data)
+            current = current.next
+            if current == self.head:
+                break
+        return nodes
+
+# 235. Find all prime numbers up to a given limit using Sieve of Eratosthenes.
+def sieve_of_eratosthenes(limit):
+    sieve = [True] * (limit + 1)
+    p = 2
+    while (p ** 2 <= limit):
+        if sieve[p]:
+            for i in range(p * p, limit + 1, p):
+                sieve[i] = False
+        p += 1
+    return [p for p in range(2, limit + 1) if sieve[p]]
+
+# 236. Find all permutations of a string.
+from itertools import permutations
+def string_permutations(s):
+    return [''.join(p) for p in permutations(s)]
+
+# 237. Implement a simple calculator that can add, subtract, multiply, divide.
+def calculator(a, b, operation):
+    if operation == 'add':
+        return a + b
+    elif operation == 'subtract':
+        return a - b
+    elif operation == 'multiply':
+        return a * b
+    elif operation == 'divide':
+        return a / b if b != 0 else "Division by zero error"
+    else:
+        return "Invalid operation"
+
+# 238. Calculate GCD using Euclid's algorithm.
+def gcd_euclid(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+
+# 239. Calculate LCM using GCD.
+def lcm_using_gcd(a, b):
+    return abs(a * b) // gcd_euclid(a, b)
+
+# 240. Count the occurrence of each element in a list.
+from collections import Counter
+def element_counts(lst):
+    return dict(Counter(lst))
+
+# 241. Find the most common element in a list.
+def most_common_element(lst):
+    return max(set(lst), key=lst.count)
+
+# 242. Check if a given number is prime using trial division.
+def is_prime_trial_division(n):
+    if n <= 1:
+        return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+# 243. Find all factors of a number.
+def find_factors(n):
+    return [i for i in range(1, n + 1) if n % i == 0]
+
+# 244. Implement a basic Caesar cipher decrypt.
+def caesar_cipher_decrypt_basic(ciphertext, shift):
+    decrypted = ''
+    for char in ciphertext:
+        if char.isalpha():
+            shift_base = ord('a') if char.islower() else ord('A')
+            decrypted += chr((ord(char) - shift_base - shift) % 26 + shift_base)
+        else:
+            decrypted += char
+    return decrypted
+
+# 245. Convert an integer to a string with commas as thousands separators.
+def int_to_commas(number):
+    return f"{number:,}"
+
+# 246. Find the greatest common divisor of a list of numbers.
+from functools import reduce
+def gcd_of_list(numbers):
+    return reduce(gcd_euclid, numbers)
+
+# 247. Find the smallest common multiple of a list of numbers.
+def lcm_of_list(numbers):
+    return reduce(lcm_using_gcd, numbers)
+
+# 248. Implement Floyd's triangle.
+def floyd_triangle(n):
+    num, result = 1, []
+    for i in range(1, n + 1):
+        row = [num + j for j in range(i)]
+        result.append(row)
+        num += i
+    return result
+
+# 249. Implement a function to calculate the nth triangular number.
+def triangular_number(n):
+    return n * (n + 1) // 2
+
+# 250. Calculate the area of a polygon using vertices coordinates (Shoelace formula).
+def polygon_area(vertices):
+    n = len(vertices)
+    area = 0.0
+    for i in range(n):
+        x1, y1 = vertices[i]
+        x2, y2 = vertices[(i + 1) % n]
+        area += x1 * y2 - x2 * y1
+    return abs(area) / 2
+
+# 251. Find the most frequent word in a sentence.
+def most_frequent_word(sentence):
+    words = sentence.lower().split()
+    return max(set(words), key=words.count)
+
+# 252. Find the mode(s) of a list of numbers.
+def modes(lst):
+    from collections import Counter
+    count = Counter(lst)
+    max_count = max(count.values())
+    return [key for key, value in count.items() if value == max_count]
+
+# 253. Implement a simple hash function.
+def simple_hash(string, size=10):
+    return sum(ord(char) for char in string) % size
+
+# 254. Calculate the exponential moving average of a list of numbers.
+def exponential_moving_average(data, alpha=0.1):
+    ema = [data[0]]
+    for price in data[1:]:
+        ema.append(alpha * price + (1 - alpha) * ema[-1])
+    return ema
+
+# 255. Implement binary exponentiation (exponentiation by squaring).
+def binary_exponentiation(base, exp):
+    result = 1
+    while exp > 0:
+        if exp % 2 == 1:
+            result *= base
+        base *= base
+        exp //= 2
+    return result
+
+# 256. Check if a number is a palindrome without converting to string.
+def is_palindrome_number(n):
+    original, reverse = n, 0
+    while n > 0:
+        reverse = reverse * 10 + n % 10
+        n //= 10
+    return original == reverse
+
+# 257. Find the nth number in the sequence of prime numbers.
+def nth_prime_number(n):
+    count, num = 0, 1
+    while count < n:
+        num += 1
+        if is_prime(num):
+            count += 1
+    return num
+
+# 258. Implement a function to find GCD of two numbers using recursion.
+def gcd_recursive(a, b):
+    return a if b == 0 else gcd_recursive(b, a % b)
+
+# 259. Calculate the n-th root of a number.
+def nth_root(x, n):
+    return x ** (1 / n)
+
+# 260. Implement a function to convert a list to a dictionary with indices as keys.
+def list_to_dict(lst):
+    return {i: lst[i] for i in range(len(lst))}
+
+# 261. Implement a function to reverse a dictionary.
+def reverse_dict(d):
+    return {v: k for k, v in d.items()}
+
+# 262. Check if two lists are equal irrespective of the order of elements.
+def are_lists_equal(lst1, lst2):
+    return sorted(lst1) == sorted(lst2)
+
+# 263. Find the length of the longest increasing subsequence in a list.
+def longest_increasing_subsequence(lst):
+    if not lst:
+        return 0
+    lis = [1] * len(lst)
+    for i in range(1, len(lst)):
+        for j in range(i):
+            if lst[i] > lst[j]:
+                lis[i] = max(lis[i], lis[j] + 1)
+    return max(lis)
+
+# 264. Count the number of words in a list of sentences.
+def count_words_in_sentences(sentences):
+    return sum(len(sentence.split()) for sentence in sentences)
+
+# 265. Convert a list of strings to uppercase.
+def uppercase_list(lst):
+    return [s.upper() for s in lst]
+
+# 266. Calculate the compound annual growth rate (CAGR).
+def cagr(initial_value, final_value, years):
+    return ((final_value / initial_value) ** (1 / years) - 1) * 100
+
+# 267. Find the prime numbers within a given range.
+def primes_in_range(lower, upper):
+    return [num for num in range(lower, upper + 1) if is_prime(num)]
+
+# 268. Find the minimum absolute difference between any two elements in a list.
+def min_absolute_difference(lst):
+    lst.sort()
+    return min(abs(lst[i] - lst[i+1]) for i in range(len(lst) - 1))
+
+# 269. Remove consecutive duplicates from a list.
+def remove_consecutive_duplicates(lst):
+    return [val for i, val in enumerate(lst) if i == 0 or val != lst[i - 1]]
+
+# 270. Determine if a number is abundant, deficient, or perfect.
+def classify_number(n):
+    divisors_sum = sum(i for i in range(1, n) if n % i == 0)
+    if divisors_sum == n:
+        return 'Perfect'
+    elif divisors_sum > n:
+        return 'Abundant'
+    else:
+        return 'Deficient'
+
+# 271. Calculate the weighted average of a list with given weights.
+def weighted_average(values, weights):
+    return sum(val * wt for val, wt in zip(values, weights)) / sum(weights)
+
+# 272. Find the median of two sorted arrays.
+def median_of_two_sorted_arrays(arr1, arr2):
+    merged = sorted(arr1 + arr2)
+    n = len(merged)
+    return (merged[n // 2] + merged[(n - 1) // 2]) / 2
+
+# 273. Calculate the determinant of a 3x3 matrix.
+def determinant_3x3(matrix):
+    return (matrix[0][0] * (matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1])
+            - matrix[0][1] * (matrix[1][0] * matrix[2][2] - matrix[1][2] * matrix[2][0])
+            + matrix[0][2] * (matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0]))
+
+# 274. Check if a number is a power of another number.
+def is_power_of(n, base):
+    if n <= 0:
+        return False
+    while n % base == 0:
+        n //= base
+    return n == 1
+
+# 275. Find all palindromic numbers within a range.
+def palindromic_numbers_in_range(start, end):
+    return [num for num in range(start, end + 1) if is_palindrome_number(num)]
+
+# 276. Calculate the Jaccard similarity between two sets.
+def jaccard_similarity(set1, set2):
+    intersection = len(set1 & set2)
+    union = len(set1 | set2)
+    return intersection / union if union else 0
+
+# 277. Convert a list of numbers to their hexadecimal representation.
+def list_to_hex(lst):
+    return [hex(num) for num in lst]
+
+# 278. Generate a random color in hexadecimal format.
+def random_hex_color():
+    return "#{:06x}".format(random.randint(0, 0xFFFFFF))
+
+# 279. Convert a list of words to a single string with spaces.
+def list_to_sentence(words):
+    return ' '.join(words)
+
+# 280. Implement a function to reverse each word in a sentence.
+def reverse_words_in_sentence(sentence):
+    return ' '.join(word[::-1] for word in sentence.split())
+
+# 281. Count the number of vowels in a list of strings.
+def count_vowels_in_list(lst):
+    return sum(sum(1 for char in word if char in 'aeiouAEIOU') for word in lst)
+
+# 282. Check if a string is a valid identifier in Python.
+def is_valid_identifier(s):
+    return s.isidentifier()
+
+# 283. Find the sum of all prime numbers up to a given limit.
+def sum_primes_up_to(limit):
+    return sum(primes_in_range(2, limit))
+
+# 284. Find the most common character in a string.
+def most_common_char(s):
+    return max(set(s), key=s.count)
+
+# 285. Replace all vowels in a string with a specified character.
+def replace_vowels(s, char):
+    return ''.join([char if c in 'aeiouAEIOU' else c for c in s])
+
+# 286. Implement a function to generate a secure random token.
+import secrets
+def generate_secure_token(length=16):
+    return secrets.token_hex(length)
+
+# 287. Sort a list of tuples based on the second element in each tuple.
+def sort_by_second_element(tuples_list):
+    return sorted(tuples_list, key=lambda x: x[1])
+
+# 288. Count the number of consonants in a string.
+def count_consonants(s):
+    return sum(1 for char in s.lower() if char.isalpha() and char not in 'aeiou')
+
+# 289. Implement a function to convert binary string to decimal.
+def binary_string_to_decimal(binary_string):
+    return int(binary_string, 2)
+
+# 290. Calculate the harmonic mean of a list of numbers.
+from scipy.stats import hmean
+
+def harmonic_mean(numbers):
+    return hmean(numbers)
