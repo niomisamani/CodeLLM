@@ -56,7 +56,7 @@ def process_query(user_query, questions, answers):
     else:
         return "Sorry, we aren't trained on this yet!"
 
-# Flask route to handle user input and render the response
+# Flask route to handle the initial landing page and role selection
 @app.route('/', methods=['GET', 'POST'])
 def home():
     dataset_path = 'dataset.txt'
@@ -72,6 +72,27 @@ def home():
         result = process_query(user_query, questions, answers)
     
     return render_template('index.html', result=result)
+
+# Flask route to handle the main code generation page
+@app.route('/main', methods=['GET', 'POST'])
+def main():
+    dataset_path = 'dataset.txt'
+    content = load_content(dataset_path)
+    if content:
+        questions, answers = extract_questions_and_answers(content)
+    else:
+        questions, answers = [], {}
+
+    role = request.args.get('role', 'Guest')
+    result = None
+
+    if request.method == 'POST':
+        user_input = request.form.get('user_input', '').strip()
+        if user_input:
+            result = process_query(user_input, questions, answers)  # Use the same fuzzy matching process
+
+    # Render main.html and pass the role and result to it
+    return render_template('main.html', role=role, result=result)
 
 if __name__ == "__main__":
     app.run(debug=True)
