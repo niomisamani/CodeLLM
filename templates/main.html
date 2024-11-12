@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevGenie - Python Code Generator</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+            background-color: #333;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 2000px;
+            padding: 100px;
+            background: #444;
+            color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #ff7f50;
+        }
+        .spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ff7f50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        textarea, button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1.1em;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .instructions {
+            margin-top: 25px;
+            color: #ddd;
+            font-style: italic;
+        }
+        .code-output {
+            background: #222;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: left;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+        }
+        .result-title {
+            margin-top: 35px;
+            color: #ff7f50;
+        }
+        /* Floating Message Box */
+        .floating-message {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #007BFF;
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .floating-message:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="role-header">Welcome</h1>
+        <h2>DevGenie Python Code Generator</h2>
+        <form method="POST" action="">
+            <label for="user_input">Enter Python Prompt:</label>
+            <textarea id="user_input" name="user_input" required placeholder="Enter your Python code prompt..."></textarea>
+            <button type="submit" onclick="showSpinner()">Generate Code</button>
+        </form>
+        
+        <div id="result-container">
+            {% if result %}
+                <h2 class="result-title">Generated Code:</h2>
+                <pre class="code-output">{{ result }}</pre>
+            {% else %}
+                <p class="instructions">Enter a prompt to generate Python code.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="floating-message" onclick="scrollToTop()">Back to Top</div>
+
+    <script>
+        function showSpinner() {
+            document.getElementById('spinner').style.display = 'block';
+            document.getElementById('result-container').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('result-container').style.display = 'block';
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const role = params.get('role');
+            const header = document.getElementById('role-header');
+            if (role) {
+                const roleText = role.charAt(0).toUpperCase() + role.slice(1);
+                header.innerText = `Welcome, ${roleText}!`;
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+    </script>
+</body>
+</html>
